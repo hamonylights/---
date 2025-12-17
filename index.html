@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>โปรแกรมประเมินผู้ป่วยภาษาไทย-จีน / 患者初步评估系统</title>
+
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont;background:#eef6fb;margin:0}
+.container{max-width:440px;margin:auto;padding:16px}
+.header{background:#0077b6;color:#fff;padding:18px;border-radius:16px;text-align:center}
+.card{background:#fff;border-radius:16px;padding:16px;margin-top:14px}
+h2{font-size:16px;color:#0077b6;margin-bottom:10px}
+label{font-size:14px;font-weight:600;display:block;margin-top:8px}
+input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;margin-top:4px}
+.inline{display:flex;gap:12px;flex-wrap:wrap}
+.inline label{font-weight:400}
+button{width:100%;padding:14px;border:none;border-radius:14px;background:#0077b6;color:#fff;font-size:16px;margin-top:16px}
+.step{display:none}
+.badge{padding:16px;border-radius:16px;color:#fff;font-weight:bold;text-align:center}
+.red{background:#d62828}
+.yellow{background:#fcbf49;color:#000}
+.green{background:#2a9d8f}
+.row{display:flex;justify-content:space-between;margin-top:6px;font-size:14px}
+</style>
+</head>
+
+<body>
+<div class="container" id="capture">
+
+<div class="header">
+<h1>แบบประเมินผู้ป่วย<br>患者初步评估表</h1>
+</div>
+
+<!-- STEP 1 -->
+<div class="step" style="display:block">
+<div class="card">
+<h2>ข้อมูลผู้ป่วย / 患者信息</h2>
+
+<label>ชื่อ / 姓名</label>
+<input id="patientName" placeholder="กรอกชื่อ / 输入姓名">
+
+<label>อายุ / 年龄</label>
+<input id="age" type="number" placeholder="ปี / 岁">
+
+<label>เพศ / 性别</label>
+<select id="gender">
+<option>ชาย / 男</option>
+<option>หญิง / 女</option>
+<option>อื่นๆ / 其他</option>
+</select>
+
+<label>น้ำหนัก (กก.) / 体重 (公斤)</label>
+<input id="weight" type="number">
+
+<label>ส่วนสูง (ซม.) / 身高 (厘米)</label>
+<input id="height" type="number">
+
+<label>วันที่มาพบแพทย์ / 就诊日期</label>
+<input id="visitDate" type="date">
+</div>
+<button onclick="next()">ถัดไป / 下一步</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<div class="card">
+<h2>อาการเบื้องต้น / 初步症状</h2>
+
+<div class="inline">
+<label><input type="checkbox" class="symptom" value="ไข้ / 发烧">ไข้ / 发烧</label>
+<label><input type="checkbox" class="symptom" value="ไอ / 咳嗽">ไอ / 咳嗽</label>
+<label><input type="checkbox" class="symptom" value="หายใจลำบาก / 呼吸困难">หายใจลำบาก / 呼吸困难</label>
+<label><input type="checkbox" class="symptom" value="เจ็บหน้าอก / 胸痛">เจ็บหน้าอก / 胸痛</label>
+</div>
+
+<label>ระดับความรุนแรง / 严重程度</label>
+<select id="severity">
+<option value="1">เล็กน้อย / 轻度</option>
+<option value="2">ปานกลาง / 中度</option>
+<option value="3">รุนแรง / 重度</option>
+</select>
+</div>
+<button onclick="prev()">ย้อนกลับ / 上一步</button>
+<button onclick="next()">ถัดไป / 下一步</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<div class="card">
+<h2>ประวัติสุขภาพ / 健康史</h2>
+
+<label>โรคประจำตัว / 既往病史</label>
+<div class="inline">
+<label><input type="checkbox" class="chronic" value="เบาหวาน / 糖尿病">เบาหวาน / 糖尿病</label>
+<label><input type="checkbox" class="chronic" value="ความดัน / 高血压">ความดัน / 高血压</label>
+<label><input type="checkbox" class="chronic" value="หัวใจ / 心脏病">หัวใจ / 心脏病</label>
+<label><input type="checkbox" id="chrNone">ไม่มี / 没有</label>
+</div>
+
+<label>แพ้ยา / 药物过敏</label>
+<div class="inline">
+<label><input type="radio" name="drug" onclick="toggle('drug',false)">ไม่มี / 没有</label>
+<label><input type="radio" name="drug" onclick="toggle('drug',true)">มี / 有</label>
+</div>
+<input id="drugText" style="display:none" placeholder="ชื่อยา / 药名">
+
+<label>แพ้อาหาร / 食物过敏</label>
+<div class="inline">
+<label><input type="radio" name="food" onclick="toggle('food',false)">ไม่มี / 没有</label>
+<label><input type="radio" name="food" onclick="toggle('food',true)">มี / 有</label>
+</div>
+<input id="foodText" style="display:none" placeholder="อาหาร / 食物">
+</div>
+
+<button onclick="prev()">ย้อนกลับ / 上一步</button>
+<button onclick="finish()">สรุปผล / 总结</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="step">
+<div class="card">
+<h2>สรุปผลการประเมิน / 评估结果</h2>
+
+<div id="triage" class="badge"></div>
+
+<div class="row"><span>ชื่อ / 姓名</span><span id="s_name"></span></div>
+<div class="row"><span>อายุ / 年龄</span><span id="s_age"></span></div>
+<div class="row"><span>BMI</span><span id="s_bmi"></span></div>
+<div class="row"><span>อาการ / 症状</span><span id="s_sym"></span></div>
+<div class="row"><span>โรคประจำตัว / 病史</span><span id="s_chr"></span></div>
+<div class="row"><span>แพ้ยา / 药物过敏</span><span id="s_drug"></span></div>
+<div class="row"><span>แพ้อาหาร / 食物过敏</span><span id="s_food"></span></div>
+
+<button onclick="saveImage()">บันทึกภาพ / 保存图片</button>
+</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+let step=0;const steps=document.querySelectorAll('.step');
+function next(){steps[step++].style.display="none";steps[step].style.display="block";}
+function prev(){steps[step--].style.display="none";steps[step].style.display="block";}
+function toggle(t,s){document.getElementById(t+'Text').style.display=s?'block':'none';}
+
+function finish(){
+steps[step].style.display="none";step++;steps[step].style.display="block";
+let bmi=(weight.value/(height.value/100)**2).toFixed(1);
+let sev=severity.value,color="green",text="绿色 不紧急";
+if(sev==2) {color="yellow";text="黄色 建议就诊";}
+if(sev==3){color="red";text="红色 紧急";}
+triage.className="badge "+color;
+triage.innerText="ระดับการรักษา / 分诊等级: "+text;
+
+s_name.innerText=patientName.value;
+s_age.innerText=age.value;
+s_bmi.innerText=bmi;
+s_sym.innerText=[...document.querySelectorAll('.symptom:checked')].map(e=>e.value).join(", ");
+s_chr.innerText=chrNone.checked?"ไม่มี / 没有":[...document.querySelectorAll('.chronic:checked')].map(e=>e.value).join(", ");
+s_drug.innerText=drugText.value||"ไม่มี / 没有";
+s_food.innerText=foodText.value||"ไม่มี / 没有";
+}
+
+function saveImage(){
+html2canvas(document.getElementById("capture")).then(c=>{
+let a=document.createElement("a");
+a.href=c.toDataURL();
+a.download="patient_summary.png";
+a.click();
+});
+}
+</script>
+</body>
+</html>
